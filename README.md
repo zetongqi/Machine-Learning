@@ -1,5 +1,5 @@
 # Machine-Learning
 
-Statistal learning algorithms implemented in Python
+Statistical learning algorithms implemented in Python
 
 Language: Python
