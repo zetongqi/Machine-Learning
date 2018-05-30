@@ -54,6 +54,7 @@ class arff_data:
                     temp.set_attribute(attribute_list)
                     attributes.append(temp)
                 else:
+                    # attributes is a list of type "feature"
                     attributes.append(feature(feature_name, 0))
 
             if line.startswith("@"):
@@ -63,11 +64,26 @@ class arff_data:
             my_list = line.split(",")
             data.append(my_list)
 
-            self.file_name = data_file
-            self.data = data
-            self.num_attributes = num_attributes-1
-            self.label = attributes[-1]
-            self.attributes = attributes[:-1]
+        # a list to indicate if the feature in the coressponding position is real=1 or nominal=0
+        real_list = []
+        for i in attributes:
+            if i.type == "real":
+                real_list.append(1)
+            if i.type == "nominal":
+                real_list.append(0)
+        
+        for j in range(len(data[0])):
+            if real_list[j] == 1:
+                for i in range(len(data)):
+                    data[i][j] = float(data[i][j])
+
+        self.file_name = data_file
+        self.data = data
+        self.num_attributes = num_attributes-1
+        self.label = attributes[-1]
+        self.attributes = attributes[:-1]
+        self.m = len(self.data)
+        self.n = len(self.data[0])
     
     def print_attributes(self):
         for i in self.attributes:
@@ -87,3 +103,10 @@ class arff_data:
 
     def get_data(self):
         return self.data
+
+    #get the entire column of feature
+    def get_feature_data(self, column_num):
+        column = []
+        for row in self.data:
+            column.append(row[column_num])
+        return column
