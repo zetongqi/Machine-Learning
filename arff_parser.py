@@ -43,7 +43,7 @@ class arff_data:
                 if startIndex != -1: #i.e. if the first quote was found
                     endIndex = line.find('\'', startIndex + 1)
                     if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                        feature_name = line[startIndex:endIndex]
+                        feature_name = line[startIndex+1:endIndex]
 
                 if "{" in line and "}" in line:
                     word = line[line.index("{") + 1 : line.index("}")]
@@ -80,11 +80,13 @@ class arff_data:
         return self.num_attributes
 
     def get_labels(self):
-        return self.attributes
+        return self.label
     
     def print_labels(self):
         self.label.print_attribute()
 
     def get_data(self):
         return self.data
-        
+
+arffdata = arff_data(sys.argv[1])
+print(arffdata.get_attributes()[0].name)
