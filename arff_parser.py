@@ -87,6 +87,3 @@ class arff_data:
 
     def get_data(self):
         return self.data
-
-arffdata = arff_data(sys.argv[1])
-print(arffdata.get_attributes()[0].name)
