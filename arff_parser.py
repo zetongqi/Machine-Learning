@@ -12,6 +12,10 @@ class feature:
 
     def set_attribute(self, attribute_list):
         self.attribute_list = attribute_list
+        if len(self.attribute_list) > 0:
+            for i in range(len(self.attribute_list)):
+                self.attribute_list[i] = self.attribute_list[i].strip()
+                self.attribute_list[i] = self.attribute_list[i].rstrip("\n\r")
 
     def print_attribute(self):
         print(self.type, " ", self.attribute_list)
@@ -76,10 +80,14 @@ class arff_data:
             if real_list[j] == 1:
                 for i in range(len(data)):
                     data[i][j] = float(data[i][j])
+            if real_list[j] == 0:
+                for i in range(len(data)):
+                    data[i][j] = data[i][j].strip()
 
         self.file_name = data_file
         self.data = data
         self.num_attributes = num_attributes-1
+        self.all_attributes = attributes
         self.label = attributes[-1]
         self.attributes = attributes[:-1]
         self.m = len(self.data)
