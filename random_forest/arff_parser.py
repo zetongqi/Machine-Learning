@@ -94,6 +94,8 @@ class arff_data:
         self.attributes = attributes[:-1]
         self.m = len(self.data)
         self.n = len(self.data[0])
+        self.mutated = 0
+        self.mutate_num_list = []
     
     def print_attributes(self):
         for i in self.attributes:
@@ -122,9 +124,23 @@ class arff_data:
         return column
 
     def mutate(self, data_percentage=0.7, feature_percentage=0.7):
+        self.mutated = 1
         num_list = random.sample(range(0, len(self.attributes)), int(len(self.attributes)*feature_percentage))
         num_list = num_list + [len(self.attributes)]
+        self.mutate_num_list = num_list
         self.data = random.sample(self.data, int(len(self.data)*data_percentage))
+        new_data = [ [row[ci] for ci in num_list] for row in self.data ]
+        self.data = new_data
+        new_all_attributes = [self.all_attributes[ci] for ci in num_list]
+        self.all_attributes = new_all_attributes
+        self.attributes = self.all_attributes[0:-1]
+        self.label = self.all_attributes[-1]
+        self.m = len(self.data)
+        self.n = len(self.attributes)
+    
+    def mutate_with_num_list(self, num_list):
+        self.mutated = 1
+        self.mutate_num_list = num_list
         new_data = [ [row[ci] for ci in num_list] for row in self.data ]
         self.data = new_data
         new_all_attributes = [self.all_attributes[ci] for ci in num_list]

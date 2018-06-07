@@ -82,7 +82,10 @@ def determine_candidate_split(arffdata, data, feature_num):
         candidates = []
         for i in range(len(feature_value_list)-1):        
             candidates.append((feature_value_list[i]+feature_value_list[i+1])/2)
-        return sorted(list(set(candidates)))
+        if len(sorted(list(set(candidates)))) == 0:
+            return [-10000000]
+        else:
+            return sorted(list(set(candidates)))
     
     if arffdata.all_attributes[feature_num].type == "nominal":
         candidates = arffdata.all_attributes[feature_num].attribute_list
@@ -122,6 +125,8 @@ def label_entropy(data, arffdata):
     for i in data:
         if arffdata.label.attribute_list[0] == i[-1]:
             cnt += 1
+    if len(data) == 0:
+        return 0
     p = cnt/len(data)
     return -p*math.log2(p)-(1-p)*math.log2(1-p)
 
@@ -129,6 +134,8 @@ def Entropy(p):
     return -p*math.log2(p)
 
 def real_feature_entropy(data, arffdata, feature_num, threshold):
+    if len(data) == 0:
+        return 0
     cnt_greater = 0
     cnt_pos_greater = 0
     cnt_pos_less = 0
@@ -165,6 +172,8 @@ def real_feature_entropy(data, arffdata, feature_num, threshold):
     return entropy
 
 def nominal_feature_entropy(data, arffdata, feature_num):
+    if len(data) == 0:
+        return 0
     entropy = 0
     for i in arffdata.all_attributes[feature_num].attribute_list:
         cnt = 0
@@ -200,6 +209,7 @@ def info_gain(data, arffdata, feature_num, threshold):
 
 def find_best_numeric_candidate(data, arffdata, feature_num):
     candidates = determine_candidate_split(arffdata, data, feature_num)
+    print("here new", get_feature_data(0, data))
     best_candidate = candidates[0]
     best_info_gain = info_gain(data, arffdata, feature_num, candidates[0])
     
@@ -257,12 +267,15 @@ class Decision_Tree:
         self.arffdata = arffdata
         self.tree = self.build_tree(arffdata.data, arffdata, self.m)
 
-    def build_tree(self, subdata, arffdata, m):    
-        if len(subdata) < m or if_same_class(subdata) == 1:
+    def build_tree(self, subdata, arffdata, m): 
+        if if_same_class(subdata) == 1:
+            return Leaf(subdata)
+        best_split, best_info_gain = find_best_split(subdata, arffdata)
+        if len(subdata) < m or best_info_gain <= 0:
             return Leaf(subdata)
         
         else:
-            best_split, best_info_gain = find_best_split(subdata, arffdata)
+            #best_split, best_info_gain = find_best_split(subdata, arffdata)
             #print(best_split)
             if arffdata.attributes[best_split].type == "real":
                 threshold, _ = find_best_numeric_candidate(subdata, arffdata, best_split)
