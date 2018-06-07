@@ -209,7 +209,6 @@ def info_gain(data, arffdata, feature_num, threshold):
 
 def find_best_numeric_candidate(data, arffdata, feature_num):
     candidates = determine_candidate_split(arffdata, data, feature_num)
-    print("here new", get_feature_data(0, data))
     best_candidate = candidates[0]
     best_info_gain = info_gain(data, arffdata, feature_num, candidates[0])
     
