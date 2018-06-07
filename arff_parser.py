@@ -1,4 +1,5 @@
 import sys
+import random
 
 #a feature class contains class type(real or nominal) and attribute list
 class feature:
@@ -33,6 +34,7 @@ class feature:
 class arff_data:
     def __init__(self, file_name):
         data_file = open(file_name, "r")
+        self.filename = file_name
         data = []
         num_attributes = 0
         attributes = []
@@ -75,7 +77,7 @@ class arff_data:
                 real_list.append(1)
             if i.type == "nominal":
                 real_list.append(0)
-        
+                
         for j in range(len(data[0])):
             if real_list[j] == 1:
                 for i in range(len(data)):
@@ -92,6 +94,8 @@ class arff_data:
         self.attributes = attributes[:-1]
         self.m = len(self.data)
         self.n = len(self.data[0])
+        self.mutated = 0
+        self.mutate_num_list = []
     
     def print_attributes(self):
         for i in self.attributes:
@@ -118,3 +122,30 @@ class arff_data:
         for row in self.data:
             column.append(row[column_num])
         return column
+
+    def mutate(self, data_percentage=0.7, feature_percentage=0.7):
+        self.mutated = 1
+        num_list = random.sample(range(0, len(self.attributes)), int(len(self.attributes)*feature_percentage))
+        num_list = num_list + [len(self.attributes)]
+        self.mutate_num_list = num_list
+        self.data = random.sample(self.data, int(len(self.data)*data_percentage))
+        new_data = [ [row[ci] for ci in num_list] for row in self.data ]
+        self.data = new_data
+        new_all_attributes = [self.all_attributes[ci] for ci in num_list]
+        self.all_attributes = new_all_attributes
+        self.attributes = self.all_attributes[0:-1]
+        self.label = self.all_attributes[-1]
+        self.m = len(self.data)
+        self.n = len(self.attributes)
+    
+    def mutate_with_num_list(self, num_list):
+        self.mutated = 1
+        self.mutate_num_list = num_list
+        new_data = [ [row[ci] for ci in num_list] for row in self.data ]
+        self.data = new_data
+        new_all_attributes = [self.all_attributes[ci] for ci in num_list]
+        self.all_attributes = new_all_attributes
+        self.attributes = self.all_attributes[0:-1]
+        self.label = self.all_attributes[-1]
+        self.m = len(self.data)
+        self.n = len(self.attributes)
