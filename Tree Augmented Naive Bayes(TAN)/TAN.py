@@ -211,13 +211,3 @@ class TAN:
 			if self.TAN_Classify(row) == row[-1]:
 				correct_cnt += 1
 		return correct_cnt/len(test_arffdata.data)
-
-
-
-
-
-
-
-
-
-
