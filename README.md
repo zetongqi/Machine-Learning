@@ -2,4 +2,4 @@
 
 Statistical learning algorithms implemented in Python
 
-Language: Python
+Language: Python3
