@@ -16,6 +16,8 @@ class Random_Forest:
             temp.mutate(0.7, 0.5)
             self.arffdata_list.append(temp)
         
+        print(len(self.arffdata_list))
+
         for i in range(self.num_of_trees):
             dt = Decision_Tree(30)
             dt.make_decision_tree(self.arffdata_list[i])
@@ -39,18 +41,10 @@ class Random_Forest:
         
         return unique_list[largest_index]
 
-    def classify(self, test_arff, rownum):
+    def classify(self, row):
         results = []
         for i in range(self.num_of_trees):
-            temp_test_arff = arff_data(test_arff.filename)
-            temp_test_arff.mutate_with_num_list(self.arffdata_list[i].mutate_num_list)
-            a = self.tree_list[i].classify(self.arffdata_list[i], self.tree_list[i].tree, temp_test_arff.data[rownum])
+            a = self.tree_list[i].classify(self.arffdata_list[i], self.tree_list[i].tree, row)
+            print(a)
             results.append(a)
         return self.get_majority(results)
-
-    def classification_accuracy(self, test_arff):
-        cnt = 0
-        for i in range(len(test_arff.data)):
-            if self.classify(test_arff, i) == test_arff.data[i][-1]:
-                cnt += 1
-        return cnt/len(test_arff.data)

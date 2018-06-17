@@ -13,9 +13,9 @@ class Question:
         self.less_than = less_than
     
     def is_numeric(self):
-        if self.arffdata.all_attributes[feature_num].type == "real":
+        if self.arffdata.all_attributes[self.feature_num].type == "real":
             return 1
-        if self.arffdata.all_attributes[feature_num].type == "nominal":
+        if self.arffdata.all_attributes[self.feature_num].type == "nominal":
             return 0
         
     def match(self, row):
