@@ -30,9 +30,9 @@ def generate_batch(X, Y, batchsize):
 
 
 # return initialized theta between -0.01 and 0.01
-def initialize_theta(X):
+def initialize_theta(num_of_features):
 	theta = []
-	for i in X[0]:
+	for i in range(num_of_features):
 		theta.append(random.uniform(-0.01, 0.01))
 	return theta
 
@@ -85,14 +85,16 @@ def update_theta(theta, gradients, l):
 
 
 def stochastic_gradient_Descent(raw, label_list, e, l, batch_size):
-	X, Y = feature_scaling(raw, label_list)
-	theta = initialize_theta(X)
+	theta = initialize_theta(len(raw[0]))
 	for epoch in range(e):
+		random.shuffle(raw)
+		X, Y = feature_scaling(raw, label_list)
 		error = 0
 		for x_batch, y_batch in generate_batch(X, Y, batch_size):
 			error += cross_entropy(theta, x_batch, y_batch)
 			gradients = cross_entropy_derivative(theta, x_batch, y_batch)
 			theta = update_theta(theta, gradients, l)
+		print(error)
 	return theta
 
 
@@ -110,11 +112,10 @@ def get_test_accuracy(test_raw, theta, label_list):
 	for i in range(len(X_test)):
 		if classify(X_test[i], theta) == Y_test[i]:
 			cnt += 1
-	return cnt / len(X_test)
+	print("Accuracy: ", cnt / len(test_raw) * 100, "%", sep = "")
 
 
-theta = stochastic_gradient_Descent(arff_data("diabetes_train.arff").data, ["negative", "positive"], 6, 0.01, 20)
+theta = stochastic_gradient_Descent(arff_data("magic_train.arff").data, ["g", "h"], 11, 0.0001, 20)
 
-
-print(get_test_accuracy(arff_data("diabetes_test.arff").data, theta, ["negative", "positive"]))
+get_test_accuracy(arff_data("magic_test.arff").data, theta, ["g", "h"])
 
