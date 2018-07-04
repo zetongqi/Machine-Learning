@@ -89,19 +89,3 @@ def fit(raw, label_list, e, l, batchsize, raw_test):
 
 lst = ["g", "h"]
 fit(arff_data("magic_train.arff").data, lst, 10, 0.1, 100, arff_data("magic_test.arff").data)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
