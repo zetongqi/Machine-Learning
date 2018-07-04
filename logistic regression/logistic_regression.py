@@ -3,6 +3,7 @@ import random
 import math
 import numpy as np
 from sklearn import preprocessing
+from sklearn import datasets
 
 
 # scale each feature of feature data X, and convert label to numeric coding given a label_list
@@ -57,6 +58,10 @@ def cross_entropy(theta, x_batch, y_batch):
 		mul = sum_of_multiplication(theta, x_batch[i])
 		o = sigmoid(mul)
 		y = y_batch[i]
+		if o == 1:
+			o = 0.99
+		if o == 0:
+			o = 0.01
 		CrossEntropy += -y * math.log(o) - (1-y) * math.log(1 - o)
 	CrossEntropy = CrossEntropy/len(x_batch)
 	return CrossEntropy
@@ -69,9 +74,9 @@ def cross_entropy_derivative(theta, x_batch, y_batch):
 			mul = sum_of_multiplication(theta, x_batch[j])
 			o = sigmoid(mul)
 			y = y_batch[j]
-			gradients[i] += o - y
+			gradients[i] += (o - y) * x_batch[j][i]
 	for i in range(len(gradients)):
-		gradients[i] = gradients[i] / len(x_batch)
+					gradients[i] = gradients[i] / len(x_batch)
 	return gradients
 
 
@@ -80,7 +85,7 @@ def update_theta(theta, gradients, l):
 		return None
 	else:
 		for i in range(len(theta)):
-			theta[i] += l * gradients[i]
+			theta[i] -= l * gradients[i]
 	return theta
 
 
@@ -89,12 +94,13 @@ def stochastic_gradient_Descent(raw, label_list, e, l, batch_size):
 	for epoch in range(e):
 		random.shuffle(raw)
 		X, Y = feature_scaling(raw, label_list)
-		error = 0
 		for x_batch, y_batch in generate_batch(X, Y, batch_size):
-			error += cross_entropy(theta, x_batch, y_batch)
 			gradients = cross_entropy_derivative(theta, x_batch, y_batch)
 			theta = update_theta(theta, gradients, l)
-		print(error)
+		error = cross_entropy(theta, x_batch, y_batch)
+		print("epoch: ", epoch, sep="")
+		print("error: ", error, sep="")
+		get_test_accuracy(arff_data("magic_test.arff").data, theta, ["g", "h"])
 	return theta
 
 
@@ -115,7 +121,5 @@ def get_test_accuracy(test_raw, theta, label_list):
 	print("Accuracy: ", cnt / len(test_raw) * 100, "%", sep = "")
 
 
-theta = stochastic_gradient_Descent(arff_data("magic_train.arff").data, ["g", "h"], 11, 0.0001, 20)
-
-get_test_accuracy(arff_data("magic_test.arff").data, theta, ["g", "h"])
+theta = stochastic_gradient_Descent(arff_data("magic_train.arff").data, ["g", "h"], 10, 0.1, 1)
 
