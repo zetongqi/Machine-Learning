@@ -107,21 +107,3 @@ def neural_network_training(train_arff, test_arff, e, l, h):
 d = arff_data("diabetes_train.arff")
 a = arff_data("diabetes_test.arff")
 neural_network_training(d, a, 100, 0.01, 10)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
